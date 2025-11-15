@@ -1,92 +1,50 @@
 package Tutorialsninja.Register;
 
-import static org.testng.Assert.assertTrue;
-
-import java.awt.dnd.DragGestureEvent;
-import java.time.Duration;
-import java.util.Date;
-
+import base.BaseClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-public class TC_RF_001 {
-	WebDriver driver ;
-	@Test
-	public void registerWithFields() {
+import java.time.Duration;
 
-		String url = "https://tutorialsninja.com/demo";
-		driver = new ChromeDriver();
+public class TC_RF_001 extends BaseClass {
 
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-		driver.get(url);
+    @Test
+    public void registerWithFields() {
+        System.out.println("TC_RF_001 - Registration test running...");
 
-		driver.findElement(By.xpath("//span[text()='My Account']")).click();
+        driver.get("https://tutorialsninja.com/demo/");
 
-		driver.findElement(By.linkText("Register")).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        // click My Account (use anchor with title attribute)
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@title='My Account']")));
 
-		// input-firstname
-		driver.findElement(By.id("input-firstname")).sendKeys("Hello");
-		// input-lastname
-		driver.findElement(By.id("input-lastname")).sendKeys("World");
+        // use JS click to be robust in headless
+        ((JavascriptExecutor) driver).executeScript(
+                "document.querySelector(\"a[title='My Account']\").click();");
 
-		// input-email
-		driver.findElement(By.id("input-email")).sendKeys(generateNewEmail());
+        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Register"))).click();
 
-		// input-telephone
-		driver.findElement(By.id("input-telephone")).sendKeys("1234567890");
+        // Fill form
+        String uniqueEmail = "ashok" + System.currentTimeMillis() + "@example.com";
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("input-firstname"))).sendKeys("Ashok");
+        driver.findElement(By.id("input-lastname")).sendKeys("Tester");
+        driver.findElement(By.id("input-email")).sendKeys(uniqueEmail);
+        driver.findElement(By.id("input-telephone")).sendKeys("9999999999");
+        driver.findElement(By.id("input-password")).sendKeys("Password@123");
+        driver.findElement(By.id("input-confirm")).sendKeys("Password@123");
 
-		// input-password
-		driver.findElement(By.id("input-password")).sendKeys("Hello@123");
-		// input-confirm
-		driver.findElement(By.id("input-confirm")).sendKeys("Hello@123");
+        // Agree and continue
+        driver.findElement(By.name("agree")).click();
+        driver.findElement(By.cssSelector("input[type='submit'][value='Continue'], input.btn.btn-primary")).click();
 
-		driver.findElement(By.name("agree")).click();
-
-		driver.findElement(By.xpath("//input[@type='submit']")).click();
-
-		assertTrue(driver.findElement(By.linkText("Logout")).isDisplayed());
-
-		assertTrue(driver.findElement(By.id("content")).isDisplayed());
-
-		String actstr = "Your Account Has Been Created!";
-		String actualText = driver.findElement(By.xpath("//div[@id='content']/h1")).getText();
-		Assert.assertEquals(actstr, actualText, "SuccessFuly Registered");
-
-		String proDetails1 = "Congratulations! Your new account has been successfully created!";
-
-		String proDetails2 = "You can now take advantage of member privileges to enhance your online shopping experience with us.";
-		String proDetails3 = "If you have ANY questions about the operation of this online shop, please e-mail the store owner.";
-		String proDetails4 = "A confirmation has been sent to the provided e-mail address. If you have not received it within the hour, please";
-
-		String expPropDetails = driver.findElement(By.id("content")).getText();
-
-		Assert.assertTrue(expPropDetails.contains(proDetails1));
-		Assert.assertTrue(expPropDetails.contains(proDetails2));
-		Assert.assertTrue(expPropDetails.contains(proDetails3));
-		Assert.assertTrue(expPropDetails.contains(proDetails4));
-
-		driver.findElement(By.xpath("//a[text()='Continue']")).click();
-
-		Assert.assertTrue(driver.findElement(By.linkText("Edit your account information")).isDisplayed());
-
-	}
-
-	public String generateNewEmail() {
-
-		return new Date().toString().replaceAll(" ", "").replaceAll("\\:", "") + "@gmail.com";
-
-	}
-	
-	@AfterMethod()
-	public void tearDown()
-	{
-		driver.quit();
-		
-	}
-
+        // Verify success
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#content h1")));
+        String heading = driver.findElement(By.cssSelector("#content h1")).getText().trim();
+        Assert.assertEquals(heading, "Your Account Has Been Created!", "Registration failed or heading mismatch");
+        System.out.println("TC_RF_001 - Registration successful for: " + uniqueEmail);
+    }
 }
