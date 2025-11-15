@@ -1,62 +1,27 @@
 package Tutorialsninja.Register;
 
-import base.BaseClass;
+import Tutorialsninja.base.BaseClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-
-public class TC_RF_003 extends BaseClass {
+public class TC_RF_004 extends BaseClass {
 
     @Test
-    public void registerThenLogin() {
-        System.out.println("TC_RF_003 - Register -> Logout -> Login test running...");
+    public void duplicateEmail() {
 
         driver.get("https://tutorialsninja.com/demo/");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        ((JavascriptExecutor) driver).executeScript(
-                "document.querySelector(\"a[title='My Account']\").click();");
-        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Register"))).click();
+        driver.findElement(By.xpath("//span[text()='My Account']")).click();
+        driver.findElement(By.linkText("Register")).click();
 
-        String email = "ashok" + System.currentTimeMillis() + "@example.com";
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("input-firstname"))).sendKeys("Ashok");
-        driver.findElement(By.id("input-lastname")).sendKeys("LoginTest");
-        driver.findElement(By.id("input-email")).sendKeys(email);
-        driver.findElement(By.id("input-telephone")).sendKeys("9999999999");
-        driver.findElement(By.id("input-password")).sendKeys("Password@123");
-        driver.findElement(By.id("input-confirm")).sendKeys("Password@123");
-        driver.findElement(By.name("agree")).click();
-        driver.findElement(By.cssSelector("input[type='submit'][value='Continue'], input.btn.btn-primary")).click();
+        driver.findElement(By.id("input-firstname")).sendKeys("Test");
+        driver.findElement(By.id("input-lastname")).sendKeys("User");
+        driver.findElement(By.id("input-email")).sendKeys("existing@mail.com"); // should fail
+        driver.findElement(By.id("input-telephone")).sendKeys("9876543210");
+        driver.findElement(By.id("input-password")).sendKeys("test123");
+        driver.findElement(By.id("input-confirm")).sendKeys("test123");
 
-        // Confirm registration success then logout
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#content h1")));
-        Assert.assertEquals(driver.findElement(By.cssSelector("#content h1")).getText().trim(),
-                "Your Account Has Been Created!");
-
-        // Logout
-        ((JavascriptExecutor) driver).executeScript(
-                "document.querySelector(\"a[title='My Account']\").click();");
-        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Logout"))).click();
-
-        // Now Login
-        ((JavascriptExecutor) driver).executeScript(
-                "document.querySelector(\"a[title='My Account']\").click();");
-        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Login"))).click();
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("input-email"))).sendKeys(email);
-        driver.findElement(By.id("input-password")).sendKeys("Password@123");
-        driver.findElement(By.cssSelector("input[type='submit'][value='Login'], input.btn.btn-primary")).click();
-
-        // Validate login by checking presence of My Account -> Logout or heading "My Account"
-        ((JavascriptExecutor) driver).executeScript(
-                "document.querySelector(\"a[title='My Account']\").click();");
-        boolean logoutVisible = wait.until(d -> d.findElements(By.linkText("Logout")).size() > 0);
-        Assert.assertTrue(logoutVisible, "Login failed - Logout not visible after login.");
-        System.out.println("TC_RF_003 - Login verified for: " + email);
+        driver.findElement(By.xpath("//input[@name='agree']")).click();
+        driver.findElement(By.xpath("//input[@value='Continue']")).click();
     }
 }

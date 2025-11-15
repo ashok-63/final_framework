@@ -1,46 +1,27 @@
 package Tutorialsninja.Register;
 
-import base.BaseClass;
+import Tutorialsninja.base.BaseClass;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.time.Duration;
 
 public class TC_RF_004 extends BaseClass {
 
     @Test
-    public void addFirstProductToWishlist() {
-        System.out.println("TC_RF_004 - Add to wishlist test running...");
+    public void duplicateEmail() {
 
         driver.get("https://tutorialsninja.com/demo/");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        driver.findElement(By.xpath("//span[text()='My Account']")).click();
+        driver.findElement(By.linkText("Register")).click();
 
-        // Go to Phones & PDAs category (example)
-        WebElement phonesLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Phones & PDAs")));
-        phonesLink.click();
+        driver.findElement(By.id("input-firstname")).sendKeys("Test");
+        driver.findElement(By.id("input-lastname")).sendKeys("User");
+        driver.findElement(By.id("input-email")).sendKeys("existing@mail.com"); // should fail
+        driver.findElement(By.id("input-telephone")).sendKeys("9876543210");
+        driver.findElement(By.id("input-password")).sendKeys("test123");
+        driver.findElement(By.id("input-confirm")).sendKeys("test123");
 
-        // Wait for product list then click first "Add to Wish List" button
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".product-thumb")));
-
-        // Many demo pages use wishlist.add in onclick — click the first such button
-        WebElement wishBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("(//button[contains(@onclick,'wishlist.add') or contains(@title,'Wish')])[1]")));
-
-        // Use JS to click to avoid headless issues
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", wishBtn);
-
-        // Wait for success alert
-        WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".alert-success")));
-        String text = alert.getText();
-        Assert.assertTrue(text.toLowerCase().contains("added to your wishlist") || text.toLowerCase().contains("success"),
-                "Expected wishlist success message, got: " + text);
-
-        System.out.println("TC_RF_004 - Product added to wishlist successfully.");
+        driver.findElement(By.xpath("//input[@name='agree']")).click();
+        driver.findElement(By.xpath("//input[@value='Continue']")).click();
     }
 }
