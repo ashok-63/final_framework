@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2025-11-12T18:14:58 IST" name="Suite" finished-at="2025-11-12T18:15:04 IST" duration-ms="5961">
+    <groups>
+    </groups>
+    <test started-at="2025-11-12T18:14:58 IST" name="Test" finished-at="2025-11-12T18:15:04 IST" duration-ms="5961">
+      <class name="Tutorialsninja.Register.TC_RF_001">
+        <test-method signature="registerWithFields()[pri:0, instance:Tutorialsninja.Register.TC_RF_001@7b98f307]" started-at="2025-11-12T18:14:58 IST" name="registerWithFields" finished-at="2025-11-12T18:15:03 IST" duration-ms="5679" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- registerWithFields -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:Tutorialsninja.Register.TC_RF_001@7b98f307]" started-at="2025-11-12T18:15:03 IST" name="tearDown" finished-at="2025-11-12T18:15:04 IST" duration-ms="240" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- Tutorialsninja.Register.TC_RF_001 -->
+    </test> <!-- Test -->
+  </suite> <!-- Suite -->
+</testng-results>
